@@ -4,7 +4,8 @@ const Manager = require('./lib/Manager');
 const inquirer = require('inquirer');
 
 const employeeQs = [
-    {name: 'fullname',
+    {prefix: '\n',
+    name: 'fullname',
     message: 'Please enter a name.',
     type: 'input'},
     {name: 'email',
@@ -15,6 +16,8 @@ const employeeQs = [
     type: 'input'}
 ]
 
+let team = [];
+
 function promptManager() {
     //manager-specific question wants office number
     const officeQ = {
@@ -22,12 +25,15 @@ function promptManager() {
         message: 'Please enter an office number.',
         type: 'input'}
     //add manager-specific question to the standard questions
-    const managerQs = employeeQs.push(officeQ)
+    const managerQs = [...employeeQs]
+    managerQs.push(officeQ)
+    console.log(managerQs)
     //get info from command line and create manager
     inquirer.prompt(managerQs)
     .then(response => {
         const {fullname,email,id,officeNumber} = response
-        new Manager(fullname,id,email,officeNumber)
+        team.push(new Manager(fullname,id,email,officeNumber))
+        askForNextEmployee()
     })
 }
 
@@ -38,12 +44,14 @@ function promptEngineer() {
         message: 'Please enter a Github username.',
         type: 'input'}
     //add engineer-specific question to the standard questions
-    const engineerQs = employeeQs.push(githubQ)
+    const engineerQs = [...employeeQs];
+    engineerQs.push(githubQ);
     //get info from command line and create engineer
     inquirer.prompt(engineerQs)
     .then(response => {
-        const {fullname,email,id,github} = response
-        new Engineer(fullname,id,email,github)
+        const {fullname,email,id,github} = response;
+        team.push(new Engineer(fullname,id,email,github));
+        askForNextEmployee()
     }) 
 }
 
@@ -54,12 +62,14 @@ function promptIntern() {
         message: 'Please enter a school name.',
         type: 'input'}
     //add intern-specific question to the standard questions
-    const internQs = employeeQs.push(schoolQ)
+    const internQs = [...employeeQs];
+    internQs.push(schoolQ);
     //get info from command line and create intern
     inquirer.prompt(internQs)
     .then(response => {
-        const {fullname,email,id,school} = response
-        new Manager(fullname,id,email,school)
+        const {fullname,email,id,school} = response;
+        team.push(new Intern (fullname,id,email,school));
+        askForNextEmployee();
     })
 }
 
@@ -67,14 +77,14 @@ function askForNextEmployee() {
     inquirer
       .prompt([
         {
-          type: "choice",
+          type: "list",
           name: "choice",
           message: "Add another employee:",
           choices: ['Engineer','Intern','Finished Building Team']
         }
       ])
       .then(val => {
-        // If the user says yes to another game, play again, otherwise quit the game
+        // If the user wants to add another person, ask those questions. otherwise quit.
         if (val.choice === 'Engineer') {
           promptEngineer();
         } else if (val.choice==='Intern'){
@@ -89,3 +99,5 @@ function askForNextEmployee() {
     console.log("\nTeam Created");
     process.exit(0);
   }
+
+  promptManager();
