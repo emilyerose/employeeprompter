@@ -2,6 +2,8 @@ const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
 const inquirer = require('inquirer');
+const pageMaker = require('./src/pageMaker');
+const fs = require('fs');
 
 const employeeQs = [
     {prefix: '\n',
@@ -18,6 +20,13 @@ const employeeQs = [
 
 let team = [];
 
+function writeHTML() {
+    fs.writeFile('./output/index.html', pageMaker(team), function (err) {
+    if (err) throw err;
+    console.log('Saved HTML file!');
+    }); 
+}
+
 function promptManager() {
     //manager-specific question wants office number
     const officeQ = {
@@ -27,7 +36,6 @@ function promptManager() {
     //add manager-specific question to the standard questions
     const managerQs = [...employeeQs]
     managerQs.push(officeQ)
-    console.log(managerQs)
     //get info from command line and create manager
     inquirer.prompt(managerQs)
     .then(response => {
@@ -97,7 +105,7 @@ function askForNextEmployee() {
 
   function quit() {
     console.log("\nTeam Created");
-    process.exit(0);
+    writeHTML(team);
   }
 
 promptManager();
