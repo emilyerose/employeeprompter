@@ -33,7 +33,7 @@ function promptManager() {
     .then(response => {
         const {fullname,email,id,officeNumber} = response
         team.push(new Manager(fullname,id,email,officeNumber))
-        askForNextEmployee()
+        askForNextEmployee();
     })
 }
 
@@ -51,7 +51,7 @@ function promptEngineer() {
     .then(response => {
         const {fullname,email,id,github} = response;
         team.push(new Engineer(fullname,id,email,github));
-        askForNextEmployee()
+        askForNextEmployee();
     }) 
 }
 
@@ -100,4 +100,4 @@ function askForNextEmployee() {
     process.exit(0);
   }
 
-  promptManager();
+promptManager();
